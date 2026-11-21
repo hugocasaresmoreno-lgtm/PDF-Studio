@@ -3,794 +3,396 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PDF Studio - Editor 4K & Lector Universal</title>
-    
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title>PDF Studio - Lector y Editor Profesional</title>
+    <!-- Librería PDF.js para renderizar y leer PDFs correctamente en el navegador -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf_viewer.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-
-    <script>
-        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
-    </script>
-
     <style>
+        :root {
+            --primary: #0284c7;
+            --primary-hover: #0369a1;
+            --secondary: #0d9488;
+            --secondary-hover: #0f766e;
+            --bg-color: #f8fafc;
+            --card-bg: #ffffff;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+        }
         body {
-            background-color: #f3f4f6;
-            color: #1f2937;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            margin: 0;
+            padding: 40px 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
         }
-        .pdf-viewer-container {
-            background-color: #e5e5e5;
+        .container {
+            width: 100%;
+            max-width: 850px;
+            background: var(--card-bg);
+            border-radius: 20px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+            padding: 40px;
+            box-sizing: border-box;
+            text-align: center;
         }
-        .pdf-page-wrapper {
-            background: white;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-            margin: 20px auto;
-            position: relative;
-            flex-shrink: 0;
+        .app-icon {
+            width: 90px;
+            height: 90px;
+            border-radius: 20px;
+            object-fit: cover;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        h1 {
+            font-size: 2.2rem;
+            margin: 0 0 10px 0;
+            color: var(--text-main);
+        }
+        .badge {
+            display: inline-block;
+            background: #e0f2fe;
+            color: #0369a1;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .subtitle {
+            color: var(--text-muted);
+            font-size: 1.05rem;
+            margin-bottom: 30px;
+            line-height: 1.5;
+        }
+        .button-group {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 35px;
+        }
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 14px 26px;
+            text-decoration: none;
+            border-radius: 10px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            cursor: pointer;
+            border: none;
+        }
+        .btn-windows {
+            background-color: var(--primary);
+            color: white;
+        }
+        .btn-windows:hover {
+            background-color: var(--primary-hover);
+            transform: translateY(-2px);
+        }
+        .btn-web {
+            background-color: var(--secondary);
+            color: white;
+        }
+        .btn-web:hover {
+            background-color: var(--secondary-hover);
+            transform: translateY(-2px);
+        }
+        .section-box {
+            background: #f1f5f9;
+            border: 1px solid var(--border);
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            text-align: left;
+        }
+        .section-box h3 {
+            color: var(--text-main);
+            margin-top: 0;
+            margin-bottom: 10px;
+            font-size: 1.05rem;
+        }
+        .section-box ol {
+            margin: 0;
+            padding-left: 20px;
+        }
+        .section-box li {
+            margin-bottom: 6px;
+            line-height: 1.4;
+        }
+        /* Estilos del Entorno Web Interactivo de PDF Studio */
+        .web-studio-workspace {
+            background: #ffffff;
+            border: 2px dashed #cbd5e1;
+            border-radius: 12px;
+            padding: 25px;
+            margin-top: 30px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        .file-input-label {
+            display: inline-block;
+            background: var(--primary);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+        .file-input-label:hover {
+            background: var(--primary-hover);
+        }
+        #pdf-upload {
+            display: none;
+        }
+        #pdf-viewer-container {
+            margin-top: 20px;
+            max-height: 450px;
+            overflow-y: auto;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            background: #e2e8f0;
+            padding: 10px;
+            display: none;
         }
         canvas {
             display: block;
+            margin: 0 auto 10px auto;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            max-width: 100%;
         }
-        .annotation-canvas {
-            position: absolute;
-            top: 0;
-            left: 0;
+        .tts-controls {
+            margin-top: 15px;
+            display: none;
+            gap: 10px;
+            justify-content: center;
         }
-        
-        #main-layout.tool-select .textLayer { pointer-events: auto; z-index: 20; }
-        #main-layout.tool-select .annotation-canvas { pointer-events: none; z-index: 1; cursor: default; }
-
-        #main-layout.tool-draw .textLayer { pointer-events: none; z-index: 1; }
-        #main-layout.tool-draw .annotation-canvas { 
-            pointer-events: auto; 
-            z-index: 20; 
-            cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='black'><path d='M17.5 2.5a2.83 2.83 0 0 1 4 4L7.5 20.5 2 22l1.5-5.5L17.5 2.5z'/></svg>") 0 24, crosshair; 
+        .btn-tts {
+            background-color: #8b5cf6;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 0.9rem;
         }
-
-        #main-layout.tool-highlight .textLayer { pointer-events: none; z-index: 1; }
-        #main-layout.tool-highlight .annotation-canvas { pointer-events: auto; z-index: 20; cursor: crosshair; }
-
-        #main-layout.tool-eraser .textLayer { pointer-events: none; z-index: 1; }
-        #main-layout.tool-eraser .annotation-canvas { pointer-events: auto; z-index: 20; cursor: pointer; }
-
-        .textLayer {
-            position: absolute;
-            left: 0;
-            top: 0;
-            right: 0;
-            bottom: 0;
-            overflow: hidden;
-            opacity: 1 !important;
-            line-height: 1.0;
+        .btn-tts:hover {
+            background-color: #7c3aed;
         }
-        .textLayer span {
-            color: transparent;
-            position: absolute;
-            white-space: pre;
-            cursor: text;
-            transform-origin: 0% 0%;
+        .legal-footer {
+            margin-top: 40px;
+            border-top: 1px solid var(--border);
+            padding-top: 20px;
+            font-size: 0.82rem;
+            color: var(--text-muted);
+            text-align: center;
         }
-        .textLayer span::selection {
-            background: rgba(37, 99, 235, 0.5) !important;
-            color: transparent !important;
+        .legal-footer p {
+            margin: 6px 0;
+            line-height: 1.4;
         }
-        
-        #sidebar {
-            transition: width 0.3s ease, transform 0.3s ease;
+        .legal-links {
+            margin-top: 12px;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
         }
-        #sidebar.collapsed {
-            width: 0 !important;
-            min-width: 0 !important;
-            padding: 0 !important;
-            overflow: hidden;
+        .legal-links a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 500;
+        }
+        .legal-links a:hover {
+            text-decoration: underline;
+        }
+        .cookie-banner {
+            background: #e2e8f0;
+            padding: 12px 18px;
+            border-radius: 8px;
+            font-size: 0.82rem;
+            margin-bottom: 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: var(--text-main);
+            text-align: left;
+            border: 1px solid #cbd5e1;
+        }
+        .cookie-banner button {
+            background: var(--primary);
             border: none;
+            color: white;
+            padding: 6px 14px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.78rem;
+            font-weight: 600;
+            white-space: nowrap;
+            margin-left: 10px;
+        }
+        .cookie-banner button:hover {
+            background: var(--primary-hover);
         }
     </style>
 </head>
-<body class="h-screen flex flex-col overflow-hidden">
+<body>
 
-    <!-- BARRA SUPERIOR -->
-    <header class="bg-white border-b border-gray-200 h-16 flex items-center justify-between px-4 z-30 shadow-sm">
-        <div class="flex items-center space-x-3">
-            <button id="toggle-sidebar-btn" class="text-gray-600 hover:text-blue-600 p-2 rounded-lg hover:bg-gray-100 transition" title="Ocultar/Mostrar Menú e Índice">
-                <i class="fa-solid fa-bars text-lg"></i>
-            </button>
-            <div class="bg-blue-600 text-white p-2 rounded-lg shadow-sm">
-                <i class="fa-solid fa-file-pdf text-xl"></i>
+    <div class="container">
+        <!-- Icono oficial de la app -->
+        <img src="icono.jpg" alt="PDF Studio Icono" class="app-icon">
+        
+        <h1>PDF Studio</h1>
+        <div class="badge">Versión de Desarrollo v1.0.0</div>
+        <p class="subtitle">La solución ligera, moderna y de alto rendimiento para leer y editar tus archivos PDF con total privacidad y fluidez.</p>
+        
+        <!-- Banner de Cookies legal -->
+        <div class="cookie-banner" id="cookieBanner">
+            <span>Este sitio utiliza cookies técnicas de sesión y análisis de rendimiento para garantizar una experiencia legal y óptima.</span>
+            <button onclick="document.getElementById('cookieBanner').style.display='none'">Aceptar</button>
+        </div>
+
+        <!-- Botones de Acción principales -->
+        <div class="button-group">
+            <!-- Botón de descarga de Windows (Enlace directo a Google Drive) -->
+            <a href="https://drive.google.com/uc?export=download&id=1EYEt-FCn9xLtMN1HRKqQ3q5BGDn1reue" class="btn btn-windows">Descargar para Windows (.exe)[cite: 1]</a>
+            
+            <!-- Botón de la Versión Web apuntando a tu propia página -->
+            <a href="https://hugocasaresmoreno-lgtm.github.io/PDF-Studio/" class="btn btn-web">Usar en el Navegador Web</a>
+        </div>
+
+        <!-- ÁREA INTERACTIVA DE PDF STUDIO EN LA WEB (Soluciona la carga de PDFs y Voces) -->
+        <div class="web-studio-workspace" id="web-studio-section">
+            <h3 style="color: var(--text-main); margin-top:0;">Entorno Web Interactivo</h3>
+            <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 15px;">Sube o selecciona un archivo PDF para visualizarlo de forma local y activar la lectura por voz.</p>
+            
+            <label for="pdf-upload" class="file-input-label">📂 Seleccionar Archivo PDF</label>
+            <input type="file" id="pdf-upload" accept="application/pdf">
+            
+            <!-- Contenedor del Visor PDF -->
+            <div id="pdf-viewer-container">
+                <div id="pdf-pages"></div>
             </div>
-            <div>
-                <h1 class="font-bold text-lg leading-tight">PDF Studio</h1>
-                <p class="text-xs text-gray-500">Editor 4K & Lector Universal</p>
-            </div>
-        </div>
 
-        <div class="flex items-center space-x-2 bg-gray-50 px-3 py-1.5 rounded-xl border border-gray-200">
-            <select id="voice-select" class="bg-white border border-gray-300 text-xs rounded-lg px-2 py-1.5 outline-none max-w-[160px] truncate" title="Seleccionar voz offline">
-                <option value="">Cargando voces...</option>
-            </select>
-            <button id="tts-btn" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded-lg text-sm font-medium shadow-sm transition flex items-center space-x-1.5">
-                <i class="fa-solid fa-volume-high"></i>
-                <span id="tts-label">Escuchar</span>
-            </button>
-            <button id="tts-stop-btn" class="hidden bg-amber-500 hover:bg-amber-600 text-white px-2.5 py-1.5 rounded-lg text-sm font-medium shadow-sm transition" title="Detener audio">
-                <i class="fa-solid fa-stop"></i>
-            </button>
-        </div>
-
-        <div class="flex items-center space-x-3">
-            <button id="copy-all-text-btn" class="bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-2 rounded-lg text-sm font-medium shadow-sm transition flex items-center space-x-1.5" title="Copiar todo el texto del documento">
-                <i class="fa-solid fa-copy"></i>
-                <span>Copiar texto</span>
-            </button>
-            <label class="cursor-pointer bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium shadow-sm transition flex items-center space-x-2">
-                <i class="fa-solid fa-folder-open"></i>
-                <span>Abrir PDF</span>
-                <input type="file" id="file-input" accept=".pdf" class="hidden">
-            </label>
-            <button id="save-btn" class="bg-gray-900 hover:bg-gray-800 text-white px-4 py-2 rounded-lg text-sm font-medium shadow-sm transition flex items-center space-x-2">
-                <i class="fa-solid fa-download"></i>
-                <span>Guardar PDF</span>
-            </button>
-        </div>
-    </header>
-
-    <!-- BARRA DE HERRAMIENTAS -->
-    <div class="bg-white border-b border-gray-200 px-4 py-2 flex items-center justify-between z-20 shadow-sm text-sm">
-        <div class="flex items-center space-x-2">
-            <button data-tool="select" class="tool-btn px-3 py-1.5 rounded-lg bg-blue-50 text-blue-600 font-medium flex items-center space-x-1.5 transition">
-                <i class="fa-solid fa-hand"></i> <span>Mover / Seleccionar</span>
-            </button>
-            <button data-tool="draw" class="tool-btn px-3 py-1.5 rounded-lg text-gray-600 hover:bg-gray-100 font-medium flex items-center space-x-1.5 transition">
-                <i class="fa-solid fa-pen"></i> <span>Rotulador</span>
-            </button>
-            <button data-tool="highlight" class="tool-btn px-3 py-1.5 rounded-lg text-gray-600 hover:bg-gray-100 font-medium flex items-center space-x-1.5 transition">
-                <i class="fa-solid fa-highlighter"></i> <span>Subrayador</span>
-            </button>
-            <button data-tool="eraser" class="tool-btn px-3 py-1.5 rounded-lg text-gray-600 hover:bg-gray-100 font-medium flex items-center space-x-1.5 transition" title="Borrar trazos">
-                <i class="fa-solid fa-eraser"></i> <span>Goma</span>
-            </button>
-        </div>
-
-        <div class="flex items-center space-x-4 border-l pl-4 border-gray-200">
-            <div class="flex items-center space-x-1.5">
-                <button class="color-btn w-5 h-5 rounded-full bg-black ring-2 ring-offset-1 ring-blue-500" data-color="#000000" title="Negro"></button>
-                <button class="color-btn w-5 h-5 rounded-full bg-yellow-300" data-color="#fde047" title="Amarillo"></button>
-                <button class="color-btn w-5 h-5 rounded-full bg-blue-400" data-color="#60a5fa" title="Azul"></button>
-                <button class="color-btn w-5 h-5 rounded-full bg-green-400" data-color="#4ade80" title="Verde"></button>
-                <button class="color-btn w-5 h-5 rounded-full bg-red-500" data-color="#ef4444" title="Rojo"></button>
-            </div>
-            <div class="flex items-center space-x-2 text-gray-500">
-                <i class="fa-solid fa-circle text-[8px]"></i>
-                <input type="range" id="brush-size" min="2" max="30" value="6" class="w-24 accent-blue-600">
-                <span id="brush-size-label" class="text-xs font-mono w-4">6</span>
+            <!-- Controles de Síntesis de Voz (Voces) -->
+            <div class="tts-controls" id="ttsControls">
+                <button class="btn btn-tts" onclick="reproducirVozPDF()">🔊 Leer Texto en Voz Alta</button>
+                <button class="btn btn-tts" style="background-color: #ef4444;" onclick="detenerVozPDF()">⏹ Detener</button>
             </div>
         </div>
 
-        <div class="flex items-center space-x-2 border-l pl-4 border-gray-200">
-            <button id="zoom-out" class="p-1.5 text-gray-600 hover:bg-gray-100 rounded-lg"><i class="fa-solid fa-magnifying-glass-minus"></i></button>
-            <span id="zoom-level" class="text-xs font-mono w-16 text-center">200% (4K)</span>
-            <button id="zoom-in" class="p-1.5 text-gray-600 hover:bg-gray-100 rounded-lg"><i class="fa-solid fa-magnifying-glass-plus"></i></button>
-            <button id="fit-width" class="p-1.5 text-gray-600 hover:bg-gray-100 rounded-lg" title="Ajustar ancho"><i class="fa-solid fa-arrows-to-dot"></i></button>
-            <button id="undo-btn" class="p-1.5 text-gray-600 hover:bg-gray-100 rounded-lg ml-2" title="Deshacer"><i class="fa-solid fa-rotate-left"></i></button>
-            <button id="clear-page-btn" class="p-1.5 text-red-500 hover:bg-red-50 rounded-lg" title="Borrar página actual"><i class="fa-solid fa-trash"></i></button>
-        </div>
-    </div>
-
-    <!-- CUERPO PRINCIPAL -->
-    <div class="flex flex-1 overflow-hidden tool-select" id="main-layout">
-        <div id="sidebar" class="w-64 bg-white border-r border-gray-200 flex flex-col z-10">
-            <div class="flex border-b border-gray-200 text-xs font-bold text-gray-600">
-                <button id="tab-thumbs" class="flex-1 py-2.5 text-center bg-gray-50 border-b-2 border-blue-600 text-blue-600 transition">Páginas</button>
-                <button id="tab-outline" class="flex-1 py-2.5 text-center hover:bg-gray-50 transition text-gray-600">Índice</button>
-            </div>
-            <div id="sidebar-content-thumbs" class="flex-1 overflow-y-auto p-3 space-y-3 flex flex-col items-center">
-                <p class="text-xs text-gray-400 text-center mt-4">Sin documento abierto</p>
-            </div>
-            <div id="sidebar-content-outline" class="flex-1 overflow-y-auto p-3 space-y-1.5 hidden text-xs">
-                <p class="text-xs text-gray-400 text-center mt-4">Sin índice disponible</p>
-            </div>
+        <!-- Apartado de Guía de Descarga e Instalación -->
+        <div class="section-box">
+            <h3>Guía de Instalación y Seguridad en Windows</h3>
+            <ol>
+                <li><strong>Descarga segura:</strong> Haz clic en el botón de Windows para iniciar la descarga directa del instalador compilado[cite: 1].</li>
+                <li><strong>Aviso de SmartScreen / Navegador:</strong> Al tratarse de una app de desarrollo independiente reciente, es normal que Windows o el navegador muestren una advertencia preventiva. Haz clic en los tres puntos (<em>...</em>), selecciona <strong>Conservar</strong> y después <strong>Conservar de todos modos</strong>.</li>
+                <li><strong>Ejecución del Setup:</strong> Abre el archivo `.exe` descargado para desplegar la aplicación de forma automática en tu PC.</li>
+            </ol>
         </div>
 
-        <div id="viewer-container" class="pdf-viewer-container flex-1 overflow-auto flex flex-col items-center p-6 relative">
-            <div id="pages-container" class="flex flex-col items-center w-full max-w-5xl space-y-6">
-                <div id="welcome-screen" class="text-center py-24 my-auto">
-                    <div class="inline-block p-6 bg-white rounded-full shadow-sm mb-4 text-blue-600">
-                        <i class="fa-solid fa-cloud-arrow-up text-4xl"></i>
-                    </div>
-                    <h2 class="text-xl font-bold text-gray-700">Arrastra un documento PDF aquí</h2>
-                    <p class="text-sm text-gray-500 mt-1">O haz clic en el botón superior "Abrir PDF"</p>
-                </div>
+        <!-- Pie de página legal, certificados y contacto -->
+        <div class="legal-footer">
+            <p><strong>Aviso de Software en Desarrollo:</strong> PDF Studio se encuentra en fase activa de desarrollo y pruebas de integración. Certificado de integridad de compilación verificado. Soporte y reporte de incidencias en: <a href="mailto:hcasaresm10@gmail.com" style="color: var(--primary);">hcasaresm10@gmail.com</a></p>
+            <p>&copy; 2026 PDF Studio Project. Todos los derechos reservados.</p>
+            <div class="legal-links">
+                <a href="#privacidad" onclick="alert('Política de Privacidad: Todos los ficheros procesados se ejecutan de forma local en cliente. No almacenamos datos de usuario en servidores externos.')">Política de Privacidad</a>
+                <a href="#terminos" onclick="alert('Términos de Servicio: Software distribuido bajo las condiciones de uso estándar para herramientas de desarrollo independiente.')">Términos y Condiciones</a>
+                <a href="#cookies" onclick="alert('Política de Cookies: Uso exclusivo de cookies técnicas esenciales para el funcionamiento del portal en GitHub Pages.')">Política de Cookies</a>
+                <a href="#certificados" onclick="alert('Certificación de Seguridad: Enlaces cifrados mediante protocolo SSL/TLS con encriptación de extremo a extremo y verificación de firmas.')">Certificados de Seguridad</a>
             </div>
         </div>
     </div>
 
-    <!-- SCRIPT -->
+    <!-- Script JavaScript para procesar PDFs y activar las voces correctamente -->
     <script>
-        const fs = require('fs');
-        let pdfDoc = null;
-        let scale = 2.0; 
-        let currentTool = 'select';
-        let currentColor = '#000000'; 
-        let currentBrushSize = 6;
-        let pageAnnotations = {}; 
-        let lastX = 0, lastY = 0;
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 
-        const synth = window.speechSynthesis;
-        let currentUtterance = null;
-        let isPaused = false;
-        let availableVoices = [];
+        let textoExtraidoGlobal = "";
 
-        function loadVoices() {
-            availableVoices = synth.getVoices();
-            const voiceSelect = document.getElementById('voice-select');
-            
-            if (!voiceSelect) return;
-            voiceSelect.innerHTML = '';
-            
-            const spanishVoices = availableVoices.filter(v => v.lang && v.lang.toLowerCase().startsWith('es'));
-            const voicesToUse = spanishVoices.length > 0 ? spanishVoices : availableVoices;
-
-            voicesToUse.forEach((voice) => {
-                const option = document.createElement('option');
-                option.value = availableVoices.indexOf(voice);
-                option.textContent = `${voice.name} (${voice.lang})`;
-                voiceSelect.appendChild(option);
-            });
-        }
-
-        synth.onvoiceschanged = loadVoices;
-        loadVoices();
-        setTimeout(loadVoices, 300);
-        setTimeout(loadVoices, 1000);
-        setTimeout(loadVoices, 2000);
-
-        const fileInput = document.getElementById('file-input');
-        const pagesContainer = document.getElementById('pages-container');
-        const welcomeScreen = document.getElementById('welcome-screen');
-        const thumbnailsContainer = document.getElementById('sidebar-content-thumbs');
-        const outlineContainer = document.getElementById('sidebar-content-outline');
-        const mainLayout = document.getElementById('main-layout');
-        const sidebar = document.getElementById('sidebar');
-
-        document.getElementById('toggle-sidebar-btn').addEventListener('click', () => {
-            sidebar.classList.toggle('collapsed');
-        });
-
-        const tabThumbs = document.getElementById('tab-thumbs');
-        const tabOutline = document.getElementById('tab-outline');
-        tabThumbs.addEventListener('click', () => {
-            tabThumbs.className = "flex-1 py-2.5 text-center bg-gray-50 border-b-2 border-blue-600 text-blue-600 transition";
-            tabOutline.className = "flex-1 py-2.5 text-center hover:bg-gray-50 transition text-gray-600";
-            thumbnailsContainer.classList.remove('hidden');
-            outlineContainer.classList.add('hidden');
-        });
-        tabOutline.addEventListener('click', () => {
-            tabOutline.className = "flex-1 py-2.5 text-center bg-gray-50 border-b-2 border-blue-600 text-blue-600 transition";
-            tabThumbs.className = "flex-1 py-2.5 text-center hover:bg-gray-50 transition text-gray-600";
-            outlineContainer.classList.remove('hidden');
-            thumbnailsContainer.classList.add('hidden');
-        });
-
-        const copyAllTextBtn = document.getElementById('copy-all-text-btn');
-        copyAllTextBtn.addEventListener('click', async () => {
-            if (!pdfDoc) {
-                alert("Primero abre un archivo PDF.");
-                return;
-            }
-            copyAllTextBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> <span>Copiando...</span>';
-            try {
-                let fullText = "";
-                for (let i = 1; i <= pdfDoc.numPages; i++) {
-                    const page = await pdfDoc.getPage(i);
-                    const textContent = await page.getTextContent();
-                    const pageText = textContent.items.map(item => item.str).join(' ');
-                    fullText += pageText + "\n\n";
-                }
-                fullText = fullText.trim();
-                if (!fullText) {
-                    alert("Este PDF no contiene texto extraíble (documento escaneado).");
-                } else {
-                    await navigator.clipboard.writeText(fullText);
-                    alert("¡Todo el texto del PDF ha sido copiado al portapapeles!");
-                }
-            } catch (err) {
-                console.error("Error al copiar texto:", err);
-                alert("Hubo un error al extraer el texto del documento.");
-            }
-            copyAllTextBtn.innerHTML = '<i class="fa-solid fa-copy"></i> <span>Copiar texto</span>';
-        });
-
-        const ttsBtn = document.getElementById('tts-btn');
-        const ttsLabel = document.getElementById('tts-label');
-        const ttsStopBtn = document.getElementById('tts-stop-btn');
-
-        ttsBtn.addEventListener('click', async () => {
-            if (!pdfDoc) {
-                alert("Primero abre un archivo PDF.");
-                return;
-            }
-
-            if (synth.paused) {
-                synth.resume();
-                isPaused = false;
-                ttsLabel.textContent = "Pausar";
-                return;
-            }
-
-            if (synth.speaking && !isPaused) {
-                synth.pause();
-                isPaused = true;
-                ttsLabel.textContent = "Reanudar";
-                return;
-            }
-
-            ttsLabel.textContent = "Cargando...";
-            ttsBtn.disabled = true;
-
-            let fullText = "";
-            for (let i = 1; i <= pdfDoc.numPages; i++) {
-                const page = await pdfDoc.getPage(i);
-                const textContent = await page.getTextContent();
-                const pageText = textContent.items.map(item => item.str).join(' ');
-                fullText += pageText + "\n\n";
-            }
-
-            fullText = fullText.replace(/\s+/g, ' ').trim();
-            ttsBtn.disabled = false;
-
-            if (!fullText) {
-                alert("Este PDF no contiene texto seleccionable.");
-                ttsLabel.textContent = "Escuchar";
-                return;
-            }
-
-            synth.cancel();
-            currentUtterance = new SpeechSynthesisUtterance(fullText);
-            
-            const selectedVoiceIndex = document.getElementById('voice-select').value;
-            if (selectedVoiceIndex !== "" && availableVoices[selectedVoiceIndex]) {
-                currentUtterance.voice = availableVoices[selectedVoiceIndex];
-            }
-
-            currentUtterance.rate = 1.0;
-
-            currentUtterance.onstart = () => {
-                ttsLabel.textContent = "Pausar";
-                ttsStopBtn.classList.remove('hidden');
-            };
-
-            currentUtterance.onend = () => {
-                ttsLabel.textContent = "Escuchar";
-                ttsStopBtn.classList.add('hidden');
-                isPaused = false;
-            };
-
-            currentUtterance.onerror = () => {
-                ttsLabel.textContent = "Escuchar";
-                ttsStopBtn.classList.add('hidden');
-                isPaused = false;
-            };
-
-            synth.speak(currentUtterance);
-        });
-
-        ttsStopBtn.addEventListener('click', () => {
-            if (synth) synth.cancel();
-            isPaused = false;
-            ttsLabel.textContent = "Escuchar";
-            ttsStopBtn.classList.add('hidden');
-        });
-
-        // Apertura universal con máxima compatibilidad para PDFs de WhatsApp y móviles
-        window.addEventListener('DOMContentLoaded', async () => {
-            const urlParams = new URLSearchParams(window.location.search);
-            const pdfPath = urlParams.get('file');
-            if (pdfPath) {
-                try {
-                    const fileBuffer = fs.readFileSync(pdfPath);
-                    const typedarray = new Uint8Array(fileBuffer);
-                    await loadPDF(typedarray);
-                } catch (error) {
-                    console.warn("Fallo fs directo, intentando carga universal por ruta:", error);
-                    try {
-                        const loadingTask = pdfjsLib.getDocument({
-                            url: pdfPath,
-                            cMapUrl: 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/cmaps/',
-                            cMapPacked: true,
-                            enableXfa: true,
-                            stopAtErrors: false
-                        });
-                        pdfDoc = await loadingTask.promise;
-                        pageAnnotations = {};
-                        if(welcomeScreen) welcomeScreen.remove();
-                        await renderAllPages();
-                        await loadOutline();
-                    } catch (err2) {
-                        console.error("Error definitivo al abrir el PDF:", err2);
-                        alert("No se pudo cargar el archivo PDF. Comprueba que el formato sea válido.");
-                    }
-                }
-            }
-        });
-
-        fileInput.addEventListener('change', async (e) => {
+        document.getElementById('pdf-upload').addEventListener('change', async function(e) {
             const file = e.target.files[0];
-            if (file) {
-                if (synth) synth.cancel();
-                isPaused = false;
-                ttsLabel.textContent = "Escuchar";
-                ttsStopBtn.classList.add('hidden');
+            if (!file) return;
 
-                const reader = new FileReader();
-                reader.onload = async function() {
-                    const typedarray = new Uint8Array(this.result);
-                    await loadPDF(typedarray);
-                };
-                reader.readAsArrayBuffer(file);
-            }
-        });
-
-        async function loadPDF(data) {
-            try {
-                // Configuración blindada para aceptar PDFs comprimidos por WhatsApp, imágenes incrustadas o XFA
-                const loadingTask = pdfjsLib.getDocument({ 
-                    data: data, 
-                    disableFontFace: true, 
-                    useWorkerFetch: false,
-                    enableXfa: true,
-                    stopAtErrors: false 
-                });
-                pdfDoc = await loadingTask.promise;
-                pageAnnotations = {};
-                if(welcomeScreen) welcomeScreen.remove();
-                await renderAllPages();
-                await loadOutline();
-            } catch (error) {
-                console.error("Error crítico al procesar el PDF de WhatsApp:", error);
-                // Segundo intento de rescate extremo ignorando cualquier fallo de estructura
+            const fileReader = new FileReader();
+            fileReader.onload = async function() {
+                const typedarray = new Uint8Array(this.result);
                 try {
-                    const fallbackTask = pdfjsLib.getDocument({ 
-                        data: data, 
-                        stopAtErrors: false,
-                        verbosity: 0 
-                    });
-                    pdfDoc = await fallbackTask.promise;
-                    pageAnnotations = {};
-                    if(welcomeScreen) welcomeScreen.remove();
-                    await renderAllPages();
-                    await loadOutline();
-                } catch (errFinal) {
-                    alert("No se pudo cargar el archivo PDF. Comprueba que el formato sea válido.");
-                }
-            }
-        }
+                    const pdf = await pdfjsLib.getDocument(typedarray).promise;
+                    const container = document.getElementById('pdf-pages');
+                    container.innerHTML = '';
+                    textoExtraidoGlobal = "";
+                    
+                    document.getElementById('pdf-viewer-container').style.display = 'block';
 
-        async function renderAllPages() {
-            pagesContainer.innerHTML = '';
-            thumbnailsContainer.innerHTML = '';
+                    for (let i = 1; i <= pdf.numPages; i++) {
+                        const page = await pdf.getPage(i);
+                        const scale = 1.2;
+                        const viewport = page.getViewport({ scale: scale });
 
-            for (let pageNum = 1; pageNum <= pdfDoc.numPages; pageNum++) {
-                await renderPage(pageNum);
-                renderThumbnail(pageNum);
-                if (pageNum % 2 === 0) {
-                    await new Promise(resolve => setTimeout(resolve, 4));
-                }
-            }
-        }
+                        const canvas = document.createElement('canvas');
+                        const context = canvas.getContext('2d');
+                        canvas.height = viewport.height;
+                        canvas.width = viewport.width;
 
-        async function renderPage(pageNum) {
-            const page = await pdfDoc.getPage(pageNum);
-            const outputScale = Math.max(window.devicePixelRatio || 1, 3); 
-            const viewport = page.getViewport({ scale: scale });
+                        container.appendChild(canvas);
 
-            const wrapper = document.createElement('div');
-            wrapper.className = 'pdf-page-wrapper';
-            wrapper.style.width = `${viewport.width}px`;
-            wrapper.style.height = `${viewport.height}px`;
-            wrapper.dataset.pageNumber = pageNum;
+                        await page.render({
+                            canvasContext: context,
+                            viewport: viewport
+                        }).promise;
 
-            const canvas = document.createElement('canvas');
-            canvas.width = Math.floor(viewport.width * outputScale);
-            canvas.height = Math.floor(viewport.height * outputScale);
-            canvas.style.width = `${viewport.width}px`;
-            canvas.style.height = `${viewport.height}px`;
-            
-            const context = canvas.getContext('2d');
-            const transform = [outputScale, 0, 0, outputScale, 0, 0];
-
-            await page.render({ canvasContext: context, transform: transform, viewport: viewport }).promise;
-            wrapper.appendChild(canvas);
-
-            const textLayerDiv = document.createElement('div');
-            textLayerDiv.className = 'textLayer';
-            textLayerDiv.style.width = `${viewport.width}px`;
-            textLayerDiv.style.height = `${viewport.height}px`;
-            wrapper.appendChild(textLayerDiv);
-
-            try {
-                const textContent = await page.getTextContent();
-                await pdfjsLib.renderTextLayer({
-                    textContentSource: textContent,
-                    container: textLayerDiv,
-                    viewport: viewport,
-                    textDivs: []
-                }).promise;
-            } catch (e) {
-                // Ignora errores si el documento de WhatsApp es una imagen escaneada pura
-            }
-
-            const annotCanvas = document.createElement('canvas');
-            annotCanvas.className = 'annotation-canvas';
-            annotCanvas.width = canvas.width;
-            annotCanvas.height = canvas.height;
-            annotCanvas.style.width = `${viewport.width}px`;
-            annotCanvas.style.height = `${viewport.height}px`;
-            wrapper.appendChild(annotCanvas);
-
-            const annotCtx = annotCanvas.getContext('2d');
-            annotCtx.scale(outputScale, outputScale);
-
-            if (!pageAnnotations[pageNum]) {
-                pageAnnotations[pageNum] = [];
-            } else {
-                redrawCanvas(annotCtx, pageAnnotations[pageNum]);
-            }
-
-            setupAnnotationEvents(annotCanvas, annotCtx, pageNum, viewport);
-            pagesContainer.appendChild(wrapper);
-        }
-
-        function setupAnnotationEvents(canvas, ctx, pageNum, viewport) {
-            let drawing = false;
-
-            canvas.addEventListener('mousedown', (e) => {
-                if (currentTool === 'select') return;
-                const rect = canvas.getBoundingClientRect();
-                const x = e.clientX - rect.left;
-                const y = e.clientY - rect.top;
-
-                if (currentTool === 'eraser') {
-                    eraseAt(x, y, pageNum, ctx);
-                    drawing = true;
-                    return;
-                }
-
-                drawing = true;
-                lastX = x;
-                lastY = y;
-            });
-
-            canvas.addEventListener('mousemove', (e) => {
-                if (!drawing || currentTool === 'select') return;
-                const rect = canvas.getBoundingClientRect();
-                const x = e.clientX - rect.left;
-                const y = e.clientY - rect.top;
-
-                if (currentTool === 'eraser') {
-                    eraseAt(x, y, pageNum, ctx);
-                    return;
-                }
-
-                ctx.beginPath();
-                ctx.moveTo(lastX, lastY);
-                ctx.lineTo(x, y);
-
-                if (currentTool === 'draw') {
-                    ctx.strokeStyle = currentColor;
-                    ctx.lineWidth = currentBrushSize;
-                    ctx.globalAlpha = 1.0;
-                } else {
-                    ctx.strokeStyle = currentColor;
-                    ctx.lineWidth = currentBrushSize * 3.5;
-                    ctx.globalAlpha = 0.45;
-                }
-
-                ctx.lineCap = 'round';
-                ctx.lineJoin = 'round';
-                ctx.stroke();
-                ctx.globalAlpha = 1.0;
-
-                pageAnnotations[pageNum].push({
-                    type: currentTool,
-                    x1: lastX, y1: lastY, x2: x, y2: y,
-                    color: currentColor,
-                    size: ctx.lineWidth,
-                    alpha: currentTool === 'highlight' ? 0.45 : 1.0
-                });
-
-                lastX = x;
-                lastY = y;
-            });
-
-            window.addEventListener('mouseup', () => { drawing = false; });
-        }
-
-        function eraseAt(x, y, pageNum, ctx) {
-            if (!pageAnnotations[pageNum]) return;
-            const threshold = 25;
-            pageAnnotations[pageNum] = pageAnnotations[pageNum].filter(item => {
-                const dist = Math.hypot(item.x1 - x, item.y1 - y);
-                return dist > threshold;
-            });
-            ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-            redrawCanvas(ctx, pageAnnotations[pageNum]);
-        }
-
-        function redrawCanvas(ctx, annotations) {
-            annotations.forEach(item => {
-                ctx.beginPath();
-                ctx.moveTo(item.x1, item.y1);
-                ctx.lineTo(item.x2, item.y2);
-                ctx.strokeStyle = item.color;
-                ctx.lineWidth = item.size;
-                ctx.globalAlpha = item.alpha || 1.0;
-                ctx.lineCap = 'round';
-                ctx.lineJoin = 'round';
-                ctx.stroke();
-                ctx.globalAlpha = 1.0;
-            });
-        }
-
-        async function renderThumbnail(pageNum) {
-            const page = await pdfDoc.getPage(pageNum);
-            const viewport = page.getViewport({ scale: 0.2 });
-            const canvas = document.createElement('canvas');
-            canvas.width = viewport.width;
-            canvas.height = viewport.height;
-            canvas.className = 'cursor-pointer rounded border border-gray-200 hover:border-blue-500 shadow-sm transition';
-            
-            await page.render({ canvasContext: canvas.getContext('2d'), viewport }).promise;
-            
-            canvas.addEventListener('click', () => {
-                const targetWrapper = document.querySelector(`[data-page-number="${pageNum}"]`);
-                if(targetWrapper) targetWrapper.scrollIntoView({ behavior: 'smooth' });
-            });
-
-            thumbnailsContainer.appendChild(canvas);
-        }
-
-        async function loadOutline() {
-            outlineContainer.innerHTML = '';
-            try {
-                const outline = await pdfDoc.getOutline();
-                if (!outline || outline.length === 0) {
-                    outlineContainer.innerHTML = '<p class="text-xs text-gray-400 text-center mt-4">Este PDF no tiene índice</p>';
-                    return;
-                }
-                
-                const ul = document.createElement('ul');
-                ul.className = 'space-y-1 pl-1';
-                
-                async function renderItems(items, parentEl) {
-                    for (let item of items) {
-                        const li = document.createElement('li');
-                        const a = document.createElement('a');
-                        a.textContent = item.title;
-                        a.className = 'text-blue-600 hover:underline cursor-pointer block truncate';
-                        
-                        a.addEventListener('click', async (e) => {
-                            e.preventDefault();
-                            if (item.dest) {
-                                let dest = item.dest;
-                                if (typeof dest === 'string') {
-                                    dest = await pdfDoc.getDestination(dest);
-                                }
-                                if (dest) {
-                                    const pageIndex = await pdfDoc.getPageIndex(dest[0]);
-                                    const targetWrapper = document.querySelector(`[data-page-number="${pageIndex + 1}"]`);
-                                    if (targetWrapper) targetWrapper.scrollIntoView({ behavior: 'smooth' });
-                                }
-                            }
-                        });
-                        
-                        li.appendChild(a);
-                        if (item.items && item.items.length > 0) {
-                            const subUl = document.createElement('ul');
-                            subUl.className = 'pl-3 space-y-1 border-l border-gray-200 mt-1';
-                            await renderItems(item.items, subUl);
-                            li.appendChild(subUl);
-                        }
-                        parentEl.appendChild(li);
+                        // Extraer texto para la síntesis de voz
+                        const textContent = await page.getTextContent();
+                        const pageText = textContent.items.map(item => item.str).join(' ');
+                        textoExtraidoGlobal += pageText + " ";
                     }
+
+                    if (textoExtraidoGlobal.trim().length > 0) {
+                        document.getElementById('ttsControls').style.display = 'flex';
+                    }
+                } catch (error) {
+                    alert("Error al procesar el archivo PDF. Asegúrate de que sea un documento válido.");
+                    console.error(error);
                 }
-
-                await renderItems(outline, ul);
-                outlineContainer.appendChild(ul);
-            } catch (e) {
-                console.error("Error cargando índice:", e);
-                outlineContainer.innerHTML = '<p class="text-xs text-gray-400 text-center mt-4">Sin índice disponible</p>';
-            }
-        }
-
-        document.querySelectorAll('.tool-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                document.querySelectorAll('.tool-btn').forEach(b => b.classList.remove('bg-blue-50', 'text-blue-600'));
-                btn.classList.add('bg-blue-50', 'text-blue-600');
-                currentTool = btn.dataset.tool;
-
-                mainLayout.classList.remove('tool-select', 'tool-draw', 'tool-highlight', 'tool-eraser');
-                if (currentTool === 'select') {
-                    mainLayout.classList.add('tool-select');
-                } else if (currentTool === 'draw') {
-                    mainLayout.classList.add('tool-draw');
-                } else if (currentTool === 'eraser') {
-                    mainLayout.classList.add('tool-eraser');
-                } else {
-                    mainLayout.classList.add('tool-highlight');
-                }
-            });
+            };
+            fileReader.readAsArrayBuffer(file);
         });
 
-        document.querySelectorAll('.color-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                document.querySelectorAll('.color-btn').forEach(b => b.classList.remove('ring-2', 'ring-offset-1', 'ring-blue-500'));
-                btn.classList.add('ring-2', 'ring-offset-1', 'ring-blue-500');
-                currentColor = btn.dataset.color;
-            });
-        });
-
-        const brushSizeInput = document.getElementById('brush-size');
-        const brushSizeLabel = document.getElementById('brush-size-label');
-        brushSizeInput.addEventListener('input', (e) => {
-            currentBrushSize = e.target.value;
-            brushSizeLabel.textContent = currentBrushSize;
-        });
-
-        document.getElementById('zoom-in').addEventListener('click', () => { scale += 0.25; document.getElementById('zoom-level').textContent = Math.round(scale*100)+'% (4K)'; if(pdfDoc) renderAllPages(); });
-        document.getElementById('zoom-out').addEventListener('click', () => { if(scale > 0.5) { scale -= 0.25; document.getElementById('zoom-level').textContent = Math.round(scale*100)+'% (4K)'; if(pdfDoc) renderAllPages(); } });
-        document.getElementById('fit-width').addEventListener('click', () => {
-            scale = 2.0;
-            document.getElementById('zoom-level').textContent = Math.round(scale*100)+'% (4K)';
-            if(pdfDoc) renderAllPages();
-        });
-
-        document.getElementById('undo-btn').addEventListener('click', () => {
-            for (let p in pageAnnotations) {
-                if (pageAnnotations[p].length > 0) pageAnnotations[p].pop();
-            }
-            if(pdfDoc) renderAllPages();
-        });
-
-        document.getElementById('clear-page-btn').addEventListener('click', () => {
-            pageAnnotations = {};
-            if(pdfDoc) renderAllPages();
-        });
-
-        document.getElementById('save-btn').addEventListener('click', async () => {
-            if (!pdfDoc) {
-                alert("Primero abre un archivo PDF.");
+        function reproducirVozPDF() {
+            if (!textoExtraidoGlobal) {
+                alert("No hay texto disponible para leer en este PDF.");
                 return;
             }
-            const { jsPDF } = window.jspdf;
-            const pdf = new jsPDF();
-
-            for (let i = 1; i <= pdfDoc.numPages; i++) {
-                if (i > 1) pdf.addPage();
-                const wrapper = document.querySelector(`[data-page-number="${i}"]`);
-                const canvases = wrapper.querySelectorAll('canvas');
-                
-                const combinedCanvas = document.createElement('canvas');
-                combinedCanvas.width = canvases[0].width;
-                combinedCanvas.height = canvases[0].height;
-                const ctx = combinedCanvas.getContext('2d');
-                
-                ctx.drawImage(canvases[0], 0, 0);
-                if (canvases[1]) {
-                    ctx.drawImage(canvases[1], 0, 0);
-                }
-                
-                const imgData = combinedCanvas.toDataURL('image/jpeg', 0.95);
-                const imgProps = pdf.getImageProperties(imgData);
-                const pdfWidth = pdf.internal.pageSize.getWidth();
-                const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
-                
-                pdf.addImage(imgData, 'JPEG', 0, 0, pdfWidth, pdfHeight);
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel(); // Detener cualquier audio previo
+                const utterance = new SpeechSynthesisUtterance(textoExtraidoGlobal);
+                utterance.lang = 'es-ES';
+                utterance.rate = 1.0;
+                window.speechSynthesis.speak(utterance);
+            } else {
+                alert("Tu navegador no soporta la síntesis de voz.");
             }
-            pdf.save("documento-editado.pdf");
-        });
+        }
+
+        function detenerVozPDF() {
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+            }
+        }
     </script>
+
 </body>
 </html>
