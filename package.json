@@ -1,0 +1,35 @@
+{
+  "name": "pdfstudioexe",
+  "version": "1.0.0",
+  "description": "Editor HD de PDF",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "dist": "electron-builder"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "devDependencies": {
+    "electron": "^45.3.1",
+    "electron-builder": "^26.18.0"
+  },
+  "build": {
+    "appId": "com.pdfstudio.app",
+    "productName": "PDF Studio",
+    "files": [
+      "main.js",
+      "index.html",
+      "package.json",
+      "icono.png"
+    ],
+    "win": {
+      "target": "nsis",
+      "icon": "icono.png"
+    }
+  },
+  "dependencies": {
+    "@travisvn/edge-tts": "^1.0.2"
+  }
+}
