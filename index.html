@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PDF Studio - Editor 4K & Lector Universal</title>
     
+    <!-- Tailwind CSS y Librerías Externas -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf_viewer.css">
@@ -207,7 +208,7 @@
         </div>
     </div>
 
-    <!-- SCRIPT CORREGIDO Y COMPLETO -->
+    <!-- SCRIPT DE FUNCIONAMIENTO -->
     <script>
         let pdfDoc = null;
         let scale = 2.0; 
@@ -223,22 +224,14 @@
         let availableVoices = [];
 
         function loadVoices() {
-            if (!synth) return;
             availableVoices = synth.getVoices();
             const voiceSelect = document.getElementById('voice-select');
-            if (!voiceSelect) return;
             
+            if (!voiceSelect) return;
             voiceSelect.innerHTML = '';
+            
             const spanishVoices = availableVoices.filter(v => v.lang && v.lang.toLowerCase().startsWith('es'));
             const voicesToUse = spanishVoices.length > 0 ? spanishVoices : availableVoices;
-
-            if (voicesToUse.length === 0) {
-                const option = document.createElement('option');
-                option.value = "";
-                option.textContent = "Voz por defecto";
-                voiceSelect.appendChild(option);
-                return;
-            }
 
             voicesToUse.forEach((voice) => {
                 const option = document.createElement('option');
@@ -248,15 +241,11 @@
             });
         }
 
-        if (synth) {
-            synth.onvoiceschanged = loadVoices;
-            loadVoices();
-            setTimeout(loadVoices, 300);
-            setTimeout(loadVoices, 1000);
-            setTimeout(loadVoices, 2000);
-        }
+        synth.onvoiceschanged = loadVoices;
+        loadVoices();
 
         const fileInput = document.getElementById('file-input');
+        const viewerContainer = document.getElementById('viewer-container');
         const pagesContainer = document.getElementById('pages-container');
         const welcomeScreen = document.getElementById('welcome-screen');
         const thumbnailsContainer = document.getElementById('sidebar-content-thumbs');
@@ -264,34 +253,23 @@
         const mainLayout = document.getElementById('main-layout');
         const sidebar = document.getElementById('sidebar');
 
+        // Drag and Drop global en la pantalla
+        viewerContainer.addEventListener('dragover', (e) => e.preventDefault());
+        viewerContainer.addEventListener('drop', async (e) => {
+            e.preventDefault();
+            const file = e.dataTransfer.files[0];
+            if (file && file.type === 'application/pdf') {
+                const reader = new FileReader();
+                reader.onload = async function() {
+                    const typedarray = new Uint8Array(this.result);
+                    await loadPDF(typedarray);
+                };
+                reader.readAsArrayBuffer(file);
+            }
+        });
+
         document.getElementById('toggle-sidebar-btn').addEventListener('click', () => {
             sidebar.classList.toggle('collapsed');
-        });
-
-        // Selector de herramientas
-        document.querySelectorAll('.tool-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                document.querySelectorAll('.tool-btn').forEach(b => b.classList.remove('bg-blue-50', 'text-blue-600'));
-                btn.classList.add('bg-blue-50', 'text-blue-600');
-                currentTool = btn.dataset.tool;
-                mainLayout.className = `flex flex-1 overflow-hidden tool-${currentTool}`;
-            });
-        });
-
-        // Selector de colores
-        document.querySelectorAll('.color-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                document.querySelectorAll('.color-btn').forEach(b => b.classList.remove('ring-2', 'ring-offset-1', 'ring-blue-500'));
-                btn.classList.add('ring-2', 'ring-offset-1', 'ring-blue-500');
-                currentColor = btn.dataset.color;
-            });
-        });
-
-        const brushSizeInput = document.getElementById('brush-size');
-        const brushSizeLabel = document.getElementById('brush-size-label');
-        brushSizeInput.addEventListener('input', (e) => {
-            currentBrushSize = e.target.value;
-            brushSizeLabel.textContent = currentBrushSize;
         });
 
         const tabThumbs = document.getElementById('tab-thumbs');
@@ -309,7 +287,6 @@
             thumbnailsContainer.classList.add('hidden');
         });
 
-        // Copiar texto
         const copyAllTextBtn = document.getElementById('copy-all-text-btn');
         copyAllTextBtn.addEventListener('click', async () => {
             if (!pdfDoc) {
@@ -339,7 +316,6 @@
             copyAllTextBtn.innerHTML = '<i class="fa-solid fa-copy"></i> <span>Copiar texto</span>';
         });
 
-        // Síntesis de voz (TTS)
         const ttsBtn = document.getElementById('tts-btn');
         const ttsLabel = document.getElementById('tts-label');
         const ttsStopBtn = document.getElementById('tts-stop-btn');
@@ -421,7 +397,6 @@
             ttsStopBtn.classList.add('hidden');
         });
 
-        // Carga de archivos por input
         fileInput.addEventListener('change', async (e) => {
             const file = e.target.files[0];
             if (file) {
@@ -454,17 +429,8 @@
                 await renderAllPages();
                 await loadOutline();
             } catch (error) {
-                console.error("Error al procesar el PDF:", error);
-                try {
-                    const fallbackTask = pdfjsLib.getDocument({ data: data, stopAtErrors: false, verbosity: 0 });
-                    pdfDoc = await fallbackTask.promise;
-                    pageAnnotations = {};
-                    if(welcomeScreen) welcomeScreen.remove();
-                    await renderAllPages();
-                    await loadOutline();
-                } catch (errFinal) {
-                    alert("No se pudo cargar el archivo PDF. Comprueba que el formato sea válido.");
-                }
+                console.error("Error crítico al procesar el PDF:", error);
+                alert("No se pudo cargar el archivo PDF. Comprueba que el formato sea válido.");
             }
         }
 
@@ -480,7 +446,7 @@
 
         async function renderPage(pageNum) {
             const page = await pdfDoc.getPage(pageNum);
-            const outputScale = Math.max(window.devicePixelRatio || 1, 2); 
+            const outputScale = Math.max(window.devicePixelRatio || 1, 3); 
             const viewport = page.getViewport({ scale: scale });
 
             const wrapper = document.createElement('div');
@@ -691,12 +657,100 @@
                         parentEl.appendChild(li);
                     }
                 }
+
                 await renderItems(outline, ul);
                 outlineContainer.appendChild(ul);
-            } catch (err) {
+            } catch (e) {
                 outlineContainer.innerHTML = '<p class="text-xs text-gray-400 text-center mt-4">Sin índice disponible</p>';
             }
         }
+
+        document.querySelectorAll('.tool-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.tool-btn').forEach(b => b.classList.remove('bg-blue-50', 'text-blue-600'));
+                btn.classList.add('bg-blue-50', 'text-blue-600');
+                currentTool = btn.dataset.tool;
+
+                mainLayout.classList.remove('tool-select', 'tool-draw', 'tool-highlight', 'tool-eraser');
+                if (currentTool === 'select') {
+                    mainLayout.classList.add('tool-select');
+                } else if (currentTool === 'draw') {
+                    mainLayout.classList.add('tool-draw');
+                } else if (currentTool === 'eraser') {
+                    mainLayout.classList.add('tool-eraser');
+                } else {
+                    mainLayout.classList.add('tool-highlight');
+                }
+            });
+        });
+
+        document.querySelectorAll('.color-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.color-btn').forEach(b => b.classList.remove('ring-2', 'ring-offset-1', 'ring-blue-500'));
+                btn.classList.add('ring-2', 'ring-offset-1', 'ring-blue-500');
+                currentColor = btn.dataset.color;
+            });
+        });
+
+        const brushSizeInput = document.getElementById('brush-size');
+        const brushSizeLabel = document.getElementById('brush-size-label');
+        brushSizeInput.addEventListener('input', (e) => {
+            currentBrushSize = e.target.value;
+            brushSizeLabel.textContent = currentBrushSize;
+        });
+
+        document.getElementById('zoom-in').addEventListener('click', () => { scale += 0.25; document.getElementById('zoom-level').textContent = Math.round(scale*100)+'% (4K)'; if(pdfDoc) renderAllPages(); });
+        document.getElementById('zoom-out').addEventListener('click', () => { if(scale > 0.5) { scale -= 0.25; document.getElementById('zoom-level').textContent = Math.round(scale*100)+'% (4K)'; if(pdfDoc) renderAllPages(); } });
+        document.getElementById('fit-width').addEventListener('click', () => {
+            scale = 2.0;
+            document.getElementById('zoom-level').textContent = Math.round(scale*100)+'% (4K)';
+            if(pdfDoc) renderAllPages();
+        });
+
+        document.getElementById('undo-btn').addEventListener('click', () => {
+            for (let p in pageAnnotations) {
+                if (pageAnnotations[p].length > 0) pageAnnotations[p].pop();
+            }
+            if(pdfDoc) renderAllPages();
+        });
+
+        document.getElementById('clear-page-btn').addEventListener('click', () => {
+            pageAnnotations = {};
+            if(pdfDoc) renderAllPages();
+        });
+
+        document.getElementById('save-btn').addEventListener('click', async () => {
+            if (!pdfDoc) {
+                alert("Primero abre un archivo PDF.");
+                return;
+            }
+            const { jsPDF } = window.jspdf;
+            const pdf = new jsPDF();
+
+            for (let i = 1; i <= pdfDoc.numPages; i++) {
+                if (i > 1) pdf.addPage();
+                const wrapper = document.querySelector(`[data-page-number="${i}"]`);
+                const canvases = wrapper.querySelectorAll('canvas');
+                
+                const combinedCanvas = document.createElement('canvas');
+                combinedCanvas.width = canvases[0].width;
+                combinedCanvas.height = canvases[0].height;
+                const ctx = combinedCanvas.getContext('2d');
+                
+                ctx.drawImage(canvases[0], 0, 0);
+                if (canvases[1]) {
+                    ctx.drawImage(canvases[1], 0, 0);
+                }
+                
+                const imgData = combinedCanvas.toDataURL('image/jpeg', 0.95);
+                const imgProps = pdf.getImageProperties(imgData);
+                const pdfWidth = pdf.internal.pageSize.getWidth();
+                const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+                
+                pdf.addImage(imgData, 'JPEG', 0, 0, pdfWidth, pdfHeight);
+            }
+            pdf.save("documento-editado.pdf");
+        });
     </script>
 </body>
 </html>
